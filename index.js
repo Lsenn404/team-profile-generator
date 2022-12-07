@@ -13,24 +13,24 @@ function newEmployee(){
             type: 'list',
             name: 'position',
             message: 'What position is this employee?',
-            Choices: [
+            choices: [
                 'Manager',
                 'Intern',
                 'Engineer'
             ]
         },
         {
-            type: 'list',
+            type: 'input',
             name: 'name',
             message: 'What is the Name of the employee?',
         },
         {
-            type: 'list',
+            type: 'input',
             name: 'email',
             message: 'What is the email of the employee?',
         },
         {
-            type: 'list',
+            type: 'input',
             name: 'id',
             message: 'What is the id of the employee?',
         }
@@ -41,56 +41,82 @@ function newEmployee(){
                     {
                         type: 'input',
                         name: 'officeNumber',
-                        message: 'What is the office number?'
+                        message: 'What is the office number?',
                     }
-                ]).then(({officeNumber}) => {
+                ]).then(({ officeNumber }) => {
                     employees.push(new Manager(
                         name,
                         id,
                         email,
                         officeNumber
                     ))
+                    another();
                 })
+                break;
             case 'Intern':
                 inquirer.prompt([
                     {
                         type: 'input',
                         name: 'school',
-                        message: 'What school did this intern go to?'
+                        message: 'What school did this intern go to?',
                     }
-                ]).then(({school}) => {
+                ]).then(({ school }) => {
                     employees.push(new Intern(
                         name,
                         id,
                         email,
                         school
                     ))
+                    another();
                 })
+                break;
             case 'Engineer':
                 inquirer.prompt([
                     {
                         type: 'input',
                         name: 'github',
-                        message: 'What is the github of this engineer?'
+                        message: 'What is the github of this engineer?',
                     }
-                ]).then(({github}) => {
+                ]).then(({ github }) => {
                     employees.push(new Engineer(
                         name,
                         id,
                         email,
                         github
                     ))
+                    another();
                 })
+                break;
             default:
             
         }
     })
+    
 }
 
+
 function renderHTMLFile() {
-    fs.writeFileSync('./index.HTML'/*html*/,
+    fs.writeFileSync('./index.HTML', /*html*/`
     <ul>
         ${employees.map(employee => /*html*/`
-        <li>${employee.getName()}<li>`)}
-    </ul>)
+        <li><h1>${employee.getName()}</h1><li>
+        <li>${employee.getId()}<li>
+        <li>${employee.getEmail()}<li>`)}
+    </ul>
+    `)
 }
+
+function another() {
+    inquirer.prompt([
+        {
+            type: 'confirm',
+            name: 'more',
+            message: 'Do you want to create another employee?',
+        }
+    ]).then(({ more }) => {
+        if(more) newEmployee()
+        else renderHTMLFile()
+    })
+}
+
+newEmployee();
